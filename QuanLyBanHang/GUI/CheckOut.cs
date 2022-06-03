@@ -282,9 +282,7 @@ namespace QuanLyBanHang.Gui
                 }
             }
         }
-        
         // ok click
-
         private void button1_Click(object sender, EventArgs e)
         {
          
@@ -343,7 +341,6 @@ namespace QuanLyBanHang.Gui
             {
                 MessageBox.Show("Enter a number");
             }
-    
         }
     }
 }
