@@ -221,6 +221,7 @@ namespace QuanLyBanHang.Gui
             return oitem;
         }
 
+        // xuất hóa đơn
         private void ExportExcel(string path)
         {
             int total = 0;
@@ -243,18 +244,25 @@ namespace QuanLyBanHang.Gui
 
             application.Cells[dataGridView1.Rows.Count + 4, dataGridView1.Columns.Count - 2] = "Discount";
             application.Cells[dataGridView1.Rows.Count + 4, dataGridView1.Columns.Count - 1] = Int32.Parse(labeldiscount.Text) + Int32.Parse(textBoxGiftCart.Text);
-
             application.Cells[dataGridView1.Rows.Count + 5, dataGridView1.Columns.Count - 2] = "Last Total";
-            application.Cells[dataGridView1.Rows.Count + 5, dataGridView1.Columns.Count - 1] = total -  Int32.Parse(labeldiscount.Text) - Int32.Parse(textBoxGiftCart.Text);
+            if((total - Int32.Parse(labeldiscount.Text) - Int32.Parse(textBoxGiftCart.Text)) > 0)
+            {
+                application.Cells[dataGridView1.Rows.Count + 5, dataGridView1.Columns.Count - 1] = total - Int32.Parse(labeldiscount.Text) - Int32.Parse(textBoxGiftCart.Text);
+
+            }
+            else
+            {
+                application.Cells[dataGridView1.Rows.Count + 5, dataGridView1.Columns.Count - 1] = 0;
+
+            }
+
             application.Columns.AutoFit();
             application.ActiveWorkbook.SaveCopyAs(path);
             application.ActiveWorkbook.Saved = true;
             totalbill = total;
         }
 
-
-
-
+        // cộng điểm tích cho khách hàng
         private void Reward(Customer customer, int bill)
         {
             using(var db = new QuanLyBanHang1Entities())
@@ -275,8 +283,6 @@ namespace QuanLyBanHang.Gui
             }
         }
         
-
-
         // ok click
 
         private void button1_Click(object sender, EventArgs e)
@@ -302,21 +308,22 @@ namespace QuanLyBanHang.Gui
 
         private void button3_Click(object sender, EventArgs e)
         {
-            if(labeldiscount.Text == "")
+
+            if (DateTime.Today.DayOfWeek == DayOfWeek.Saturday)
             {
-                if (DateTime.Today.DayOfWeek == DayOfWeek.Saturday)
+                int total = Int32.Parse(labelTotal.Text);
+                if (total > 400000)
                 {
-                    int total = Int32.Parse(labelTotal.Text);
-                    if (total > 400000)
-                    {
-                        total = total - 50000;
-                        labelTotal.Text = total.ToString();
-                        labeldiscount.Text = 50000.ToString();
-                        
-                    }
+                    total = total - 50000;
+                    labelTotal.Text = total.ToString();
+                    labeldiscount.Text = 50000.ToString();
+
                 }
             }
-   
+            else
+            {
+                MessageBox.Show("Shop on Saturday and order more than 400.000 to get a discount");
+            }
         }
 
         private void buttonGiftCart_Click(object sender, EventArgs e)
@@ -325,7 +332,12 @@ namespace QuanLyBanHang.Gui
             {
                 int total = Int32.Parse(labelTotal.Text);
                 total = total - Int32.Parse(textBoxGiftCart.Text);
+                if(total<0)
+                {
+                    total = 0;
+                }
                 labelTotal.Text = total.ToString();
+                buttonGiftCart.Enabled = false;
             }
             catch
             {
