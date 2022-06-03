@@ -78,34 +78,43 @@ namespace QuanLyBanHang.Gui
         // Load form check out
         private void CheckOut_Load(object sender, EventArgs e)
         {
-            LoadOrCreateCusRank();
-            this.thisorder=  CreateOrder();
-            comboBoxPayment.SelectedIndex = 0;
-            buttonOrder.Enabled = false;
-            using (var db = new QuanLyBanHang1Entities())
+            CountCartBUS index = new CountCartBUS();
+            if(index.CountCart() == 0)
             {
-                int total = 0;
-                if (db.CartItems.Count() == 0)
+                MessageBox.Show("Your cart is empty");
+                this.Close();
+            }
+            else
+            {
+                LoadOrCreateCusRank();
+                this.thisorder = CreateOrder();
+                comboBoxPayment.SelectedIndex = 0;
+                buttonOrder.Enabled = false;
+                using (var db = new QuanLyBanHang1Entities())
                 {
-                    buttonOrder.Enabled = false;
+                    int total = 0;
+                    if (db.CartItems.Count() == 0)
+                    {
+                        buttonOrder.Enabled = false;
+                    }
+                    foreach (var i in db.CartItems)
+                    {
+                        total = total + ((int)i.quantity * (int)i.price);
+                    }
+                    dataGridView1.DataSource = db.CartItems.Select(a => new
+                    {
+                        Name = a.Product.pro_name,
+                        Quantity = a.quantity,
+                        Price = a.price,
+                        Total = a.quantity * a.price,
+                    }).ToList();
+                    if (customer != null)
+                    {
+                        textBoxCusName.Text = customer.e_name;
+                        textBoxCusPhone.Text = customer.phone_number.ToString();
+                    }
+                    labelTotal.Text = total.ToString();
                 }
-                foreach (var i in db.CartItems)
-                {
-                    total = total + ((int)i.quantity * (int)i.price);
-                }
-                dataGridView1.DataSource = db.CartItems.Select(a => new
-                {
-                    Name = a.Product.pro_name,
-                    Quantity = a.quantity,
-                    Price = a.price,
-                    Total = a.quantity * a.price,
-                }).ToList();
-                if (customer != null)
-                {
-                    textBoxCusName.Text = customer.e_name;
-                    textBoxCusPhone.Text = customer.phone_number.ToString();
-                }
-                labelTotal.Text = total.ToString();
             }
         }
 

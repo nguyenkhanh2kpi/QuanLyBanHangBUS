@@ -40,5 +40,23 @@ namespace QuanLyBanHang.BUS
                 return false;
             }
         }
+
+
+        public Product FindProduct(string ID)
+        {
+            using (var db = new QuanLyBanHang1Entities())
+            {
+                foreach (var q in db.Products)
+                {
+                    if (q.pro_id == Convert.ToInt32(ID))
+                    {
+                        return q;
+                    }
+                }
+            }
+            return null;
+
+        }
+
     }
 }

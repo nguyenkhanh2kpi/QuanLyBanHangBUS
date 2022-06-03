@@ -1,5 +1,4 @@
-﻿using QuanLyBanHang.BUS;
-using QuanLyBanHang.Models;
+﻿using QuanLyBanHang.Models;
 using QuanLyBanHang.UserController;
 using System;
 using System.Collections.Generic;
@@ -10,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using QuanLyBanHang.BUS;
 namespace QuanLyBanHang.Gui
 {
     public partial class Home : Form
@@ -21,12 +20,13 @@ namespace QuanLyBanHang.Gui
         {
             InitializeComponent();
         }
+
         public Home(Employee e)
         {
             InitializeComponent();
             this.emp = e;
         }
-        // load form
+
         private void Home_Load(object sender, EventArgs e)
         {
             buttonProduct_Click(sender, e);
@@ -43,7 +43,7 @@ namespace QuanLyBanHang.Gui
             }
             comboBox1.SelectedIndex = 0;
         }
-        // load product
+
         private void buttonProduct_Click(object sender, EventArgs e)
         {
             flowLayoutPanel1.Controls.Clear();
@@ -55,7 +55,7 @@ namespace QuanLyBanHang.Gui
                 flowLayoutPanel1.Controls.Add(new ProductControl(i));
             }
         }
-        // load by cart
+
         private void LoadProductByCat(string category)
         {
             flowLayoutPanel1.Controls.Clear();
@@ -79,7 +79,7 @@ namespace QuanLyBanHang.Gui
             loginform.Show();
             this.Visible = false;
         }
-        // nút tìm kiếm
+
         private void buttonSearch_Click(object sender, EventArgs e)
         {
             if (comboBox1.SelectedItem.ToString() == "All")
@@ -91,7 +91,7 @@ namespace QuanLyBanHang.Gui
                 LoadProductByCat(comboBox1.SelectedItem.ToString());
             }
         }
-        // nút giỏ hàng
+
         private void buttonCart_Click(object sender, EventArgs e)
         {
             flowLayoutPanel1.Controls.Clear();
@@ -108,7 +108,7 @@ namespace QuanLyBanHang.Gui
                 labelTotalCart.Text = total.ToString();
             }
         }
-        // nút check khách hàng
+
         private void buttonCheck_Click(object sender, EventArgs e)
         {
             if (textBoxCusphone.Text == null)
@@ -142,62 +142,96 @@ namespace QuanLyBanHang.Gui
         {
             buttonCart_Click(sender, e);
         }
-        // nút thanh toán
+
         private void buttonCheckOut_Click(object sender, EventArgs e)
         {
-            using(var db = new QuanLyBanHang1Entities())
+            if (textBoxCusphone.Enabled == false)
             {
-                if(db.CartItems.Count()!= 0)
+                buttonCart_Click(sender, e);
+                var form = new CheckOut(this.emp);
+                form.ShowDialog();
+            }
+            else
+            {
+                if (cus == null)
                 {
-
-                    if (textBoxCusphone.Enabled == false)
-                    {
-                        buttonCart_Click(sender, e);
-                        var form = new CheckOut(this.emp);
-                        form.ShowDialog();
-                    }
-                    else
-                    {
-                        if (cus == null)
-                        {
-                            MessageBox.Show("can find your customer");
-                        }
-                        else
-                        {
-                            buttonCart_Click(sender, e);
-                            var form = new CheckOut(this.emp, this.cus);
-                            form.ShowDialog();
-                        }
-                    }
+                    MessageBox.Show("can find your customer");
+                }
+                else
+                {
+                    buttonCart_Click(sender, e);
+                    var form = new CheckOut(this.emp, this.cus);
+                    form.ShowDialog();
                 }
             }
         }
-        // nút reset
+
         private void buttonReset_Click(object sender, EventArgs e)
         {
             textBoxCusphone.Enabled = true;
             comboBox1.Items.Clear();
             Home_Load(sender, e);
         }
-        // nút mua hàng nhanh
+
         private void buttonNocus_Click(object sender, EventArgs e)
         {
             textBoxCusphone.Enabled = false;
         }
-        // nút trả hàng
+
         private void buttonGiveBack_Click(object sender, EventArgs e)
         {
             var give = new GiveBack();
             give.ShowDialog();
         }
-        // nút quét mã khách hàng bằng thẻ
+
+        //Bắt đầu từ đây
         private void buttonScan_Click(object sender, EventArgs e)
         {
             var form = new ScanForm();
             form.ShowDialog();
+            //Thêm 2 dòng này để chạy âm thanh beep giống siêu thị nghe cho sống động
+            System.Media.SoundPlayer player = new System.Media.SoundPlayer("../../Resources/beep.wav");
+            player.Play();
+
             textBoxCusphone.Text = form.code;
             textBoxCusphone.Refresh();
             buttonCheck_Click(sender, e);
+        }
+        private void productScan_Click(object sender, EventArgs e)
+        {
+            var form = new ScanForm();
+            form.ShowDialog();
+            string ID = form.code;
+
+            System.Media.SoundPlayer player = new System.Media.SoundPlayer("../../Resources/beep.wav");
+            player.Play();
+            //BUS
+            FindObjectBUS findObject = new FindObjectBUS();
+            AddObjectBUS addObject = new AddObjectBUS();
+
+            Product product =findObject.FindProduct(ID);
+            if (product == null && form.code!=null)
+            {
+                MessageBox.Show("Invalid Barcode!!!");
+            }
+            addObject.AddCart(product);
+        }
+
+        private void checkProduct_Click(object sender, EventArgs e)
+        {
+            //BUS
+            FindObjectBUS findObject = new FindObjectBUS();
+            AddObjectBUS addObject = new AddObjectBUS();
+            Product product = findObject.FindProduct(productIDTextBox.Text);
+
+            if (product == null)
+            {
+                MessageBox.Show("Invalid ID!!!");
+            }
+
+            addObject.AddCart(product);
+            buttonCart_Click(sender, e);
+
         }
     }
 }

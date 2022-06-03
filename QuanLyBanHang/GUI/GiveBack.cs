@@ -116,14 +116,26 @@ namespace QuanLyBanHang.Gui
 
         private void giveBackToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string id = dataGridViewDetail.Rows[dataGridViewOrder.CurrentRow.Index].Cells[0].Value.ToString();
-            using(var db = new QuanLyBanHang1Entities())
+            try
             {
-                var item = db.OrderItems.FirstOrDefault(i => i.item_id.ToString() == id);
-                MessageBox.Show(item.item_id.ToString());
-                GiveBackItem(item);
-                
+                string id = dataGridViewDetail.Rows[dataGridViewDetail.CurrentRow.Index].Cells[0].Value.ToString();
+                using (var db = new QuanLyBanHang1Entities())
+                {
+                    var item = db.OrderItems.FirstOrDefault(i => i.item_id.ToString() == id);
+                    MessageBox.Show(item.item_id.ToString());
+                    GiveBackItem(item);
+
+                }
             }
+            catch
+            {
+                MessageBox.Show("No selected row");
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

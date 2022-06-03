@@ -12,7 +12,7 @@ namespace QuanLyBanHang.BUS
         // reset mỗi tháng
         public void resetEachMonth()
         {
-            DateTime datereset = new DateTime(DateTime.Today.Year, DateTime.Today.Month,1, 10, 30, 50);
+            DateTime datereset = new DateTime(DateTime.Today.Year, DateTime.Today.Month,1);
             if (DateTime.Now ==datereset)
             {
                 resetRank();

@@ -105,12 +105,12 @@ namespace QuanLyBanHang.Gui
             this.dataGridViewDetail.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(222)))), ((int)(((byte)(246)))));
             this.dataGridViewDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewDetail.ContextMenuStrip = this.contextMenuStrip1;
-            this.dataGridViewDetail.Location = new System.Drawing.Point(78, 381);
+            this.dataGridViewDetail.Location = new System.Drawing.Point(78, 396);
             this.dataGridViewDetail.Name = "dataGridViewDetail";
             this.dataGridViewDetail.RowHeadersWidth = 51;
             this.dataGridViewDetail.RowTemplate.Height = 24;
             this.dataGridViewDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewDetail.Size = new System.Drawing.Size(716, 208);
+            this.dataGridViewDetail.Size = new System.Drawing.Size(716, 247);
             this.dataGridViewDetail.TabIndex = 14;
             this.dataGridViewDetail.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridViewDetail_CellMouseUp);
             // 
